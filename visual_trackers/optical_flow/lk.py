@@ -1,7 +1,11 @@
 import cv2
 import numpy as np
-from dataclasses import dataclass, asdict
+import logging
 from typing import NamedTuple
+
+logging.basicConfig(level=logging.DEBUG)
+
+log = logging.getLogger(__name__)
 
 # @dataclass
 class Point(NamedTuple):
@@ -14,7 +18,7 @@ class BBox(NamedTuple):
     lower_right: Point
 
 feature_params = dict(maxCorners=100,
-                    qualityLevel=0.3,
+                    qualityLevel=0.7,
                     minDistance=7,
                     blockSize=7)
 # Parameters for lucas kanade optical flow
@@ -50,8 +54,8 @@ class LKTracker():
 
         if self.tracking:
             rect_width, rect_height = DEFAULT_GATE_SIZE
-            top_left_pt = (x - rect_width // 2, y - rect_height // 2)
-            bottom_right_pt = (x + rect_width // 2, y + rect_height // 2)
+            top_left_pt = Point(x - rect_width // 2, y - rect_height // 2)
+            bottom_right_pt = Point(x + rect_width // 2, y + rect_height // 2)
             bbox = BBox(top_left_pt, bottom_right_pt)
             self.track(bbox)
 
@@ -78,14 +82,16 @@ class LKTracker():
             self.tracking_init = False
             self.old_gray = frame_gray
             feature_mask = np.zeros_like(frame_gray)
-            
             upper_left = (int(self.bbox[0].x), int(self.bbox[0].y))
             lower_right = (int(self.bbox[1].x), int(self.bbox[1].y))
             feature_mask = cv2.rectangle(feature_mask, upper_left, lower_right, (255,255,255), -1)
             self.p0 = cv2.goodFeaturesToTrack(self.old_gray, mask=feature_mask, **feature_params)
+            
             if type(self.p0) == type(None) :
                 self.tracking = False
             #TODO: remove
+            if self.tracking:
+                log.info(f"GoodFeatures found {len(self.p0)} items to track ")
             self.mask = np.zeros_like(frame)
 
         if self.tracking:
@@ -99,10 +105,15 @@ class LKTracker():
             # Select good points
             if p1 is not None:
                 good_new = p1[st==1]
+                if len(good_new) == 0:
+                    log.warning("LK Failed to found features to track , tracker break")
+                    return False, Point(0, 0), Point(0, 0), Point(0, 0)
+
                 midpoint = np.float32(np.mean(good_new, axis=0))
                 up_left = np.float32(np.min(good_new, axis=0))
                 down_right = np.float32(np.max(good_new, axis=0))
                 good_old = self.p0[st==1]
+                
                 # draw the tracks
                 for i, (new, old) in enumerate(zip(good_new, good_old)):
                     a, b = new.ravel()
