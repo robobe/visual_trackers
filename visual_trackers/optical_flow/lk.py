@@ -18,12 +18,12 @@ class BBox(NamedTuple):
     lower_right: Point
 
 feature_params = dict(maxCorners=100,
-                    qualityLevel=0.7,
-                    minDistance=7,
-                    blockSize=7)
+                    qualityLevel=0.5,
+                    minDistance=1)
+                    # blockSize=7)
 # Parameters for lucas kanade optical flow
-lk_params = dict( winSize = (15, 15),
- maxLevel = 2,
+lk_params = dict( winSize = (10, 10),
+ maxLevel = 4,
  criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
 WINDOW_NAME = "LK"
