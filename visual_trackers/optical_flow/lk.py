@@ -9,8 +9,8 @@ log = logging.getLogger(__name__)
 
 # @dataclass
 class Point(NamedTuple):
-    x: float
-    y: float
+    x: int
+    y: int
 
 
 class BBox(NamedTuple):
@@ -113,9 +113,9 @@ class LKTracker():
                 up_left = np.float32(np.min(good_new, axis=0))
                 down_right = np.float32(np.max(good_new, axis=0))
                 good_old = self.p0[st==1]
-                
                 # draw the tracks
                 for i, (new, old) in enumerate(zip(good_new, good_old)):
+                    
                     a, b = new.ravel()
                     c, d = old.ravel()
                     self.mask = cv2.line(self.mask, (int(a), int(b)), (int(c), int(d)), self.color[i].tolist(), 2)
@@ -127,8 +127,8 @@ class LKTracker():
         self.old_gray = frame_gray.copy()
         # result = Result(midpoint, [up_left, down_right])
         # return result
-        midpoint = Point(x=float(midpoint[0]),y=float(midpoint[1]))
-        up_left = Point(x=float(up_left[0]),y=float(up_left[1]))
-        down_right = Point(x=float(down_right[0]),y=float(down_right[1]))
+        midpoint = Point(x=midpoint[0],y=midpoint[1])
+        up_left = Point(x=up_left[0],y=up_left[1])
+        down_right = Point(x=down_right[0],y=down_right[1])
         return self.tracking, midpoint, up_left, down_right
         
