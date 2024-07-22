@@ -30,8 +30,6 @@ class NanoTracker():
 
     def track(self, frame, bbox):
         try:
-            print("---")
-            print(bbox)
             self.tracker.init(frame, bbox)
         except Exception as e:
             print('Unable to initialize tracker with requested bounding box. Is there any object?')
