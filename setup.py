@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='visual_trackers',
-    version='0.0.1',
+    version='0.0.2',
     author='Author Name',
     author_email='author@gmail.com',
     description='Description of my package',

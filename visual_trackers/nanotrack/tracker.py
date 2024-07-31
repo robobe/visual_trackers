@@ -7,15 +7,14 @@ logging.basicConfig(level=logging.DEBUG)
 
 log = logging.getLogger(__name__)
 
-NANO_BACKBONE = "/workspaces/rome_ws/src/rome_application/submodules/visual_trackers/visual_trackers/nanotrack/nanotrack_backbone_sim.onnx"
-NANO_HEADNECK = "/workspaces/rome_ws/src/rome_application/submodules/visual_trackers/visual_trackers/nanotrack/nanotrack_head_sim.onnx"
+
 
 
 class NanoTracker():
-    def __init__(self, width=640, height=360) -> None:
+    def __init__(self, backbone, neckhead) -> None:
         params = cv2.TrackerNano_Params()
-        params.backbone = NANO_BACKBONE
-        params.neckhead = NANO_HEADNECK
+        params.backbone = backbone
+        params.neckhead = neckhead
         self.tracker = cv2.TrackerNano_create(params)
 
         
